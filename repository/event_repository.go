@@ -1,9 +1,12 @@
 package repository
 
-import "time"
+import (
+	"event-booking-api/storage"
+	"time"
+)
 
 type Event struct {
-	ID int
+	ID int64
 	Name string `binding:"required"`
 	Description string `binding:"required"`
 	Location string `binding:"required"`
@@ -13,8 +16,26 @@ type Event struct {
 
 var events = []Event{}
 
-func (e Event) Save() {
-	events = append(events, e)
+func (e Event) Save() error {
+	query := `
+		INSERT INTO events(name, description, location, dateTime, user_id)
+		VALUES (?, ?, ?, ?, ?)
+	`
+
+	stmt, err := storage.DB.Prepare(query)
+	if err != nil {
+		return err
+	}
+
+	defer stmt.Close()
+	result, err := stmt.Exec(e.Name, e.Description, e.Location, e.DateTime, e.UserID)
+	if err != nil {
+		return err
+	}
+
+	id, err := result.LastInsertId()
+	e.ID = id
+	return err
 }
 
 func GetAllEvents() []Event {
