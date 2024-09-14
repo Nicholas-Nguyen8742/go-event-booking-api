@@ -34,7 +34,7 @@ func (user User) Save() error {
 		return err
 	}
 
-	id, err := result.LastInsertId()
-	User.ID = id
+	userId, err := result.LastInsertId()
+	user.ID = userId
 	return err
 }
