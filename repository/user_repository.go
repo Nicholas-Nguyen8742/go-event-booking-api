@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"errors"
 	"event-booking-api/storage"
 	"event-booking-api/utils"
 )
@@ -37,4 +38,23 @@ func (user User) Save() error {
 	userId, err := result.LastInsertId()
 	user.ID = userId
 	return err
+}
+
+func (user User) ValidateCredentials() error {
+	query := `SELECT password FROM users WHERE email = ?`
+	row := storage.DB.QueryRow(query, user.Email)
+
+	var retrievedPassword string
+
+	err := row.Scan(&retrievedPassword)
+	if err != nil {
+		return err
+	}
+
+	isPasswordValid := utils.ValidatePasswordHash(user.Password, retrievedPassword)
+	if !isPasswordValid {
+		return errors.New("Credentials invalid")
+	}
+
+	return nil
 }
