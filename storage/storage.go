@@ -57,4 +57,21 @@ func createTables(sqliteDb *sql.DB) {
 	}
 
 	statement.Exec()
+
+	createRegistrationsTable := `
+		CREATE TABLE IF NOT EXISTS registrations (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			event_id INTEGER,
+			user_id INTEGER,
+			FOREIGN KEY(event_id) REFERENCES events(id),
+			FOREIGN KEY(user_id) REFERENCES users(id)
+		)
+	`
+
+	statement, err = sqliteDb.Prepare(createRegistrationsTable)
+	if err != nil {
+		panic("Could not create registrations database.")
+	}
+
+	statement.Exec()
 }
