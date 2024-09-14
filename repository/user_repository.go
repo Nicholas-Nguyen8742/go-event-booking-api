@@ -46,7 +46,7 @@ func (user User) ValidateCredentials() error {
 
 	var retrievedPassword string
 
-	err := row.Scan(&retrievedPassword)
+	err := row.Scan(&user.ID, &retrievedPassword)
 	if err != nil {
 		return err
 	}
