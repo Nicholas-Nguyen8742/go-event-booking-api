@@ -103,7 +103,6 @@ func  (event Event) Update() error {
 	return err
 }
 
-
 func (event Event) Delete() error {
 	query := `
 		DELETE FROM events WHERE id = ?
@@ -117,5 +116,37 @@ func (event Event) Delete() error {
 	defer stmt.Close()
 
 	_, err = stmt.Exec(event.ID)
+	return err
+}
+
+func (event Event) Register(userId int64) error {
+	query := "INSERT INTO registrations(event_id, user_id) VALUES (?, ?)"
+	stmt, err := storage.DB.Prepare(query)
+	if (err != nil) {
+		return err
+	}
+
+	defer stmt.Close()
+
+	_, err = stmt.Exec(event.ID, userId)
+
+	return err
+}
+
+func (event Event) Cancel(userId int64) error {
+	query := `
+		DELETE FROM registrations
+		WHERE event_id = ? AND user_id = ?
+	`
+
+	stmt, err := storage.DB.Prepare(query)
+	if (err != nil) {
+		return err
+	}
+
+	defer stmt.Close()
+
+	_, err = stmt.Exec(event.ID, userId)
+
 	return err
 }
