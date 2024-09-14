@@ -53,7 +53,7 @@ func (user User) ValidateCredentials() error {
 
 	isPasswordValid := utils.ValidatePasswordHash(user.Password, retrievedPassword)
 	if !isPasswordValid {
-		return errors.New("Credentials invalid")
+		return errors.New("credentials invalid")
 	}
 
 	return nil
