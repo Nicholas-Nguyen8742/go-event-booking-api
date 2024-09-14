@@ -2,13 +2,14 @@ package main
 
 import (
 	"event-booking-api/api/routes"
-	"event-booking-api/storage"
+	"event-booking-api/bootstrap"
 
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
-	storage.InitDb()
+	bootstrap.App()
+
 	server := gin.Default()
 
 	routes.RegisterRoutes(server)
